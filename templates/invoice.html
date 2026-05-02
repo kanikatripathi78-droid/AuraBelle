@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f9f9f9;
+    }
+    
+    /* Navbar */
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 50px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    nav h2 {
+        color: #d4a574;
+        font-size: 28px;
+        font-weight: 700;
+    }
+    
+    nav .right {
+        display: flex;
+        gap: 30px;
+    }
+    
+    nav .right a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        font-size: 16px;
+    }
+    
+    /* Invoice Container */
+    .invoice-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+    
+    .invoice {
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .invoice-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #d4a574;
+    }
+    
+    .invoice-header h1 {
+        font-size: 36px;
+        color: #d4a574;
+    }
+    
+    .invoice-header .invoice-id {
+        text-align: right;
+    }
+    
+    .invoice-header .invoice-id h3 {
+        font-size: 20px;
+        color: #333;
+    }
+    
+    .invoice-header .invoice-id p {
+        color: #666;
+    }
+    
+    .invoice-section {
+        margin-bottom: 30px;
+    }
+    
+    .invoice-section h3 {
+        font-size: 18px;
+        color: #d4a574;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .invoice-section p {
+        color: #333;
+        line-height: 1.8;
+    }
+    
+    .invoice-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    
+    .invoice-table th,
+    .invoice-table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .invoice-table th {
+        background: #f9f9f9;
+        color: #333;
+        font-weight: 600;
+    }
+    
+    .invoice-table td {
+        color: #666;
+    }
+    
+    .invoice-table .total-row {
+        font-weight: 700;
+        color: #d4a574;
+        font-size: 18px;
+    }
+    
+    .invoice-footer {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        text-align: center;
+    }
+    
+    .invoice-footer p {
+        color: #666;
+        font-size: 14px;
+    }
+    
+    .btn-print {
+        display: inline-block;
+        padding: 15px 30px;
+        background: #d4a574;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 16px;
+        margin-top: 20px;
+        cursor: pointer;
+        border: none;
+    }
+    
+    .btn-print:hover {
+        background: #c49464;
+    }
+    
+    .btn-back {
+        display: inline-block;
+        padding: 15px 30px;
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 16px;
+        margin-top: 20px;
+        margin-left: 10px;
+    }
+</style>
+</head>
+
+<body>
+
+<nav>
+    <h2>AuraBelle</h2>
+    <div class="right">
+        <a href="/">Home</a>
+        <a href="/orders">Orders</a>
+    </div>
+</nav>
+
+<div class="invoice-container">
+    <div class="invoice">
+        <div class="invoice-header">
+            <div>
+                <h1>🧾 INVOICE</h1>
+                <p>AuraBelle - Crafted by Hands, Cherished by Hearts</p>
+            </div>
+            <div class="invoice-id">
+                <h3>Bill ID: {{ order.order_id }}</h3>
+                <p>Date: {{ order.created_at }}</p>
+            </div>
+        </div>
+        
+        <div class="invoice-section">
+            <h3>Customer Details</h3>
+            <p>
+                <strong>Name:</strong> {{ order.name }}<br>
+                <strong>Email:</strong> {{ order.user_email }}<br>
+                <strong>Phone:</strong> {{ order.phone }}
+            </p>
+        </div>
+        
+        <div class="invoice-section">
+            <h3>Delivery Address</h3>
+            <p>
+                {{ order.address }}<br>
+                {{ order.city }} - {{ order.pincode }}
+            </p>
+        </div>
+        
+        <div class="invoice-section">
+            <h3>Ordered Products</h3>
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.product_name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>₹{{ item.price }}</td>
+                        <td>₹{{ item.total }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="invoice-section">
+            <h3>Order Summary</h3>
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Subtotal</td>
+                        <td>₹{{ order.total }}</td>
+                    </tr>
+                    <tr>
+                        <td>Tax (GST 18%)</td>
+                        <td>₹{{ order.tax }}</td>
+                    </tr>
+                    <tr>
+                        <td>Shipping</td>
+                        <td>₹0 (Free)</td>
+                    </tr>
+                    <tr>
+                        <td>Payment Method</td>
+                        <td>{{ order.payment_method | upper }}</td>
+                    </tr>
+                    <tr>
+                        <td>Payment Status</td>
+                        <td>{{ order.payment_status }}</td>
+                    </tr>
+                    <tr>
+                        <td>Order Status</td>
+                        <td>{{ order.status }}</td>
+                    </tr>
+                    {% if order.order_notes %}
+                    <tr>
+                        <td>Order Notes</td>
+                        <td>{{ order.order_notes }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr class="total-row">
+                        <td>Grand Total</td>
+                        <td>₹{{ order.grand_total }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="invoice-footer">
+            <p>Thank you for shopping with AuraBelle!</p>
+            <p>For any queries, contact: hello@aurabelle.com</p>
+        </div>
+        
+        <div style="text-align: center;">
+            <button onclick="window.print()" class="btn-print">🖨️ Print Invoice</button>
+            <a href="/invoice_pdf/{{ order.order_id }}" class="btn-print">Download PDF</a>
+            <a href="/orders" class="btn-back">Back to Orders</a>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

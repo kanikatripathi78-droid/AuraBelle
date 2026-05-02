@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f9f9f9;
+    }
+    
+    /* Navbar */
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 50px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    nav h2 {
+        color: #d4a574;
+        font-size: 28px;
+        font-weight: 700;
+    }
+    
+    nav .right {
+        display: flex;
+        gap: 30px;
+    }
+    
+    nav .right a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        font-size: 16px;
+        transition: color 0.3s;
+    }
+    
+    nav .right a:hover {
+        color: #d4a574;
+    }
+    
+    /* Cart Container */
+    .cart-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+    
+    .cart-container h1 {
+        text-align: center;
+        font-size: 42px;
+        color: #333;
+        margin-bottom: 40px;
+    }
+    
+    /* Cart Items */
+    .cart-item {
+        display: flex;
+        gap: 20px;
+        background: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .cart-item img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+    
+    .cart-item-details {
+        flex: 1;
+    }
+    
+    .cart-item-details h3 {
+        font-size: 22px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .cart-item-details p {
+        color: #666;
+        margin-bottom: 8px;
+    }
+    
+    .cart-item-details .price {
+        font-size: 24px;
+        color: #d4a574;
+        font-weight: 700;
+    }
+    
+    .remove-btn {
+        padding: 10px 20px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    
+    .remove-btn:hover {
+        background: #c82333;
+    }
+
+    .quantity-form {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 10px 0;
+    }
+
+    .quantity-form input {
+        width: 70px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+
+    .quantity-form button {
+        padding: 8px 14px;
+        background: #333;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    
+    /* Cart Summary */
+    .cart-summary {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-top: 30px;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .summary-row.total {
+        border-bottom: none;
+        font-size: 24px;
+        font-weight: 700;
+        color: #d4a574;
+    }
+    
+    .btn-checkout {
+        display: block;
+        width: 100%;
+        padding: 18px;
+        background: #d4a574;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        margin-top: 20px;
+        transition: background 0.3s;
+    }
+    
+    .btn-checkout:hover {
+        background: #c49464;
+    }
+    
+    .empty-cart {
+        text-align: center;
+        padding: 60px;
+    }
+    
+    .empty-cart p {
+        font-size: 20px;
+        color: #666;
+        margin-bottom: 20px;
+    }
+    
+    .btn-continue {
+        display: inline-block;
+        padding: 15px 30px;
+        background: #d4a574;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 16px;
+    }
+</style>
+</head>
+
+<body>
+
+<nav>
+    <h2>AuraBelle</h2>
+    <div class="right">
+        <a href="/">Home</a>
+        <a href="/categories">Categories</a>
+        <a href="/wishlist">Wishlist <span class="wishlist-badge">{{ wishlist_count }}</span></a>
+        <a href="/cart">🛒 <span class="badge">{{ cart_count }}</span></a>
+    </div>
+</nav>
+
+<div class="cart-container">
+    <h1>🛒 Your Cart</h1>
+    
+    {% if items|length == 0 %}
+    <div class="empty-cart">
+        <p>Your cart is empty</p>
+        <a href="/categories" class="btn-continue">Continue Shopping</a>
+    </div>
+    {% else %}
+    
+    {% for item in items %}
+    <div class="cart-item">
+        <img src="{{ item.image }}" alt="{{ item.name }}">
+        <div class="cart-item-details">
+            <h3>{{ item.name }}</h3>
+            <p>Category: {{ item.category | title }}</p>
+            <p>Stock Available: {{ item.stock }}</p>
+            <form action="/update_cart/{{ item.cart_id }}" method="POST" class="quantity-form">
+                <label>Quantity</label>
+                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.stock }}">
+                <button type="submit">Update</button>
+            </form>
+            <p class="price">₹{{ item.price }} x {{ item.quantity }} = ₹{{ item.price * item.quantity }}</p>
+        </div>
+        <a href="/remove_from_cart/{{ item.cart_id }}" class="remove-btn">Remove</a>
+    </div>
+    {% endfor %}
+    
+    <div class="cart-summary">
+        <div class="summary-row">
+            <span>Subtotal</span>
+            <span>₹{{ total }}</span>
+        </div>
+        <div class="summary-row">
+            <span>Shipping</span>
+            <span>₹0 (Free)</span>
+        </div>
+        <div class="summary-row">
+            <span>Tax (GST 18%)</span>
+            <span>₹{{ (total * 0.18) | round(2) }}</span>
+        </div>
+        <div class="summary-row total">
+            <span>Grand Total</span>
+            <span>₹{{ total + (total * 0.18) | round(2) }}</span>
+        </div>
+        
+        <a href="/checkout" class="btn-checkout">Proceed to Checkout</a>
+    </div>
+    {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

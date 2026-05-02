@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{{ url_for('static', filename='images/products/background.jpeg') }}');
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .login-container {
+        background: white;
+        padding: 50px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        width: 100%;
+        max-width: 450px;
+    }
+    
+    .login-container h2 {
+        text-align: center;
+        font-size: 36px;
+        color: #d4a574;
+        margin-bottom: 40px;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-group label {
+        display: block;
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+    
+    .form-group input {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+    }
+    
+    .form-group input:focus {
+        outline: none;
+        border-color: #d4a574;
+    }
+    
+    .btn-login {
+        width: 100%;
+        padding: 18px;
+        background: #d4a574;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+    
+    .btn-login:hover {
+        background: #c49464;
+    }
+    
+    .register-link {
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #ddd;
+    }
+    
+    .register-link p {
+        color: #666;
+        font-size: 16px;
+    }
+    
+    .register-link a {
+        color: #d4a574;
+        text-decoration: none;
+        font-weight: 600;
+    }
+    
+    .register-link a:hover {
+        text-decoration: underline;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="login-container">
+    <h2>Login</h2>
+    {% if db_error %}
+    <p style="background:#fee2e2;color:#991b1b;padding:10px 12px;border-radius:8px;margin-bottom:15px;">
+        {{ db_error }}
+    </p>
+    {% endif %}
+    
+    <form method="POST">
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="Enter your email" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter your password" required>
+        </div>
+        
+        <button type="submit" class="btn-login">Login</button>
+    </form>
+    
+    <div class="register-link">
+        <p>New user? <a href="/signup">Register yourself</a></p>
+    </div>
+</div>
+
+</body>
+</html>

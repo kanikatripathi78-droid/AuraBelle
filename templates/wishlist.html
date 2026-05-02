@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<nav>
+    <h2>AuraBelle</h2>
+    <div class="right">
+        <a href="/">Home</a>
+        <a href="/profile">Profile</a>
+        <a href="/wishlist">Wishlist <span class="wishlist-badge">{{ wishlist_count }}</span></a>
+        <a href="/cart">🛒 <span class="badge">{{ cart_count }}</span></a>
+    </div>
+</nav>
+
+<h2 style="text-align:center; margin:20px 0;">Your Wishlist ❤️</h2>
+
+{% if items|length == 0 %}
+<p style="text-align:center;">Your wishlist is empty</p>
+{% endif %}
+
+<div class="grid">
+{% for item in items %}
+<div class="card">
+    <img src="{{ item.image }}">
+    <h3>{{ item.name }}</h3>
+    <p>₹{{ item.price }}</p>
+    <a href="/product/{{ item.id }}"><button class="btn">View Product</button></a>
+    <a href="/add_to_cart/{{ item.id }}"><button class="btn" style="background:#28a745;">Add to Cart</button></a>
+    <a href="/remove_from_wishlist/{{ item.wishlist_id }}"><button class="btn" style="background:#dc3545;">Remove</button></a>
+</div>
+{% endfor %}
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

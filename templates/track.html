@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #f9f9f9;
+    }
+    
+    /* Navbar */
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 50px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    nav h2 {
+        color: #d4a574;
+        font-size: 28px;
+        font-weight: 700;
+    }
+    
+    nav .right {
+        display: flex;
+        gap: 30px;
+    }
+    
+    nav .right a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        font-size: 16px;
+        transition: color 0.3s;
+    }
+    
+    nav .right a:hover {
+        color: #d4a574;
+    }
+    
+    /* Track Container */
+    .track-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+    
+    .track-container h1 {
+        text-align: center;
+        font-size: 42px;
+        color: #333;
+        margin-bottom: 40px;
+    }
+    
+    /* Order Info */
+    .order-info {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 30px;
+    }
+    
+    .order-info h2 {
+        font-size: 28px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    .info-box {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    
+    .info-box h4 {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 8px;
+    }
+    
+    .info-box p {
+        font-size: 18px;
+        color: #333;
+        font-weight: 600;
+    }
+    
+    /* Tracking Steps */
+    .tracking-steps {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .tracking-steps h2 {
+        font-size: 28px;
+        color: #333;
+        margin-bottom: 30px;
+    }
+    
+    .step {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 20px 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .step:last-child {
+        border-bottom: none;
+    }
+    
+    .step-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    
+    .step-completed {
+        background: #d4edda;
+    }
+    
+    .step-current {
+        background: #fff3cd;
+    }
+    
+    .step-pending {
+        background: #f8f9fa;
+    }
+    
+    .step-content h4 {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 5px;
+    }
+    
+    .step-content p {
+        color: #666;
+        font-size: 14px;
+    }
+    
+    .step-completed .step-content h4 {
+        color: #28a745;
+    }
+    
+    .step-current .step-content h4 {
+        color: #856404;
+    }
+    
+    .step-pending .step-content h4 {
+        color: #6c757d;
+    }
+    
+    .btn-back {
+        display: inline-block;
+        padding: 15px 30px;
+        background: #d4a574;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 16px;
+        margin-top: 30px;
+    }
+    
+    .btn-back:hover {
+        background: #c49464;
+    }
+</style>
+</head>
+
+<body>
+
+<nav>
+    <h2>AuraBelle</h2>
+    <div class="right">
+        <a href="/">Home</a>
+        <a href="/orders">Orders</a>
+        <a href="/cart">🛒 <span class="badge">{{ cart_count }}</span></a>
+    </div>
+</nav>
+
+<div class="track-container">
+    <h1>🔍 Track Order</h1>
+    
+    <div class="order-info">
+        <h2>Order Details</h2>
+        <div class="info-grid">
+            <div class="info-box">
+                <h4>Bill ID</h4>
+                <p>{{ order.order_id }}</p>
+            </div>
+            <div class="info-box">
+                <h4>Order Status</h4>
+                <p>{{ order.status }}</p>
+            </div>
+            <div class="info-box">
+                <h4>Total Amount</h4>
+                <p>₹{{ order.grand_total }}</p>
+            </div>
+            <div class="info-box">
+                <h4>Payment</h4>
+                <p>{{ order.payment_method | upper }} ({{ order.payment_status }})</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tracking-steps">
+        <h2>📍 Order Tracking</h2>
+        
+        <div class="step {% if order.status in ['Order Placed', 'Processing', 'Shipped', 'Delivered'] %}step-completed{% else %}step-pending{% endif %}">
+            <div class="step-icon {% if order.status in ['Order Placed', 'Processing', 'Shipped', 'Delivered'] %}step-completed{% else %}step-pending{% endif %}">✅</div>
+            <div class="step-content">
+                <h4>Order Placed</h4>
+                <p>Your order has been confirmed</p>
+            </div>
+        </div>
+        
+        <div class="step {% if order.status in ['Processing', 'Shipped', 'Delivered'] %}step-completed{% elif order.status == 'Order Placed' %}step-current{% else %}step-pending{% endif %}">
+            <div class="step-icon {% if order.status in ['Processing', 'Shipped', 'Delivered'] %}step-completed{% elif order.status == 'Order Placed' %}step-current{% else %}step-pending{% endif %}">🔄</div>
+            <div class="step-content">
+                <h4>Processing</h4>
+                <p>Your order is being prepared</p>
+            </div>
+        </div>
+        
+        <div class="step {% if order.status in ['Shipped', 'Delivered'] %}step-completed{% elif order.status == 'Processing' %}step-current{% else %}step-pending{% endif %}">
+            <div class="step-icon {% if order.status in ['Shipped', 'Delivered'] %}step-completed{% elif order.status == 'Processing' %}step-current{% else %}step-pending{% endif %}">🚚</div>
+            <div class="step-content">
+                <h4>Shipped</h4>
+                <p>Your order is on its way</p>
+            </div>
+        </div>
+        
+        <div class="step {% if order.status == 'Delivered' %}step-completed{% elif order.status == 'Shipped' %}step-current{% else %}step-pending{% endif %}">
+            <div class="step-icon {% if order.status == 'Delivered' %}step-completed{% elif order.status == 'Shipped' %}step-current{% else %}step-pending{% endif %}">📦</div>
+            <div class="step-content">
+                <h4>Delivered</h4>
+                <p>Your order has been delivered</p>
+            </div>
+        </div>
+    </div>
+    
+    <a href="/orders" class="btn-back">← Back to Orders</a>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

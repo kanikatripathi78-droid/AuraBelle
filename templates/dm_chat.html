@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DM - AuraBelle</title>
+<style>
+    body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f3f4f6; }
+    .wrap { max-width: 900px; margin: 24px auto; padding: 0 14px; }
+    .chat-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 18px rgba(0,0,0,0.08); overflow: hidden; }
+    .chat-head { background: #1f2937; color: white; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+    .chat-body { padding: 16px; min-height: 420px; max-height: 520px; overflow-y: auto; background: #f9fafb; }
+    .msg { max-width: 72%; padding: 10px 12px; border-radius: 10px; margin-bottom: 10px; }
+    .mine { background: #d4a574; color: #fff; margin-left: auto; }
+    .theirs { background: #fff; border: 1px solid #e5e7eb; color: #222; margin-right: auto; }
+    .meta { font-size: 11px; opacity: 0.85; margin-top: 4px; }
+    .chat-form { padding: 12px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px; }
+    .chat-form input { flex: 1; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font: inherit; }
+    .chat-form button { padding: 12px 18px; border: none; border-radius: 8px; background: #111827; color: #fff; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="chat-card">
+        <div class="chat-head">
+            <strong>DM with {{ target_user.name or target_user.username or target_user.email }}</strong>
+            <a href="/artisan/{{ target_user.email }}" style="color:white; text-decoration:none;">Back to Profile</a>
+        </div>
+        <div class="chat-body">
+            {% for m in messages %}
+            <div class="msg {% if m.sender_email == session.get('user') %}mine{% else %}theirs{% endif %}">
+                <div>{{ m.message }}</div>
+                <div class="meta">{{ m.created_at }}</div>
+            </div>
+            {% else %}
+            <p>No messages yet. Say hi!</p>
+            {% endfor %}
+        </div>
+        <form class="chat-form" action="/dm/{{ target_user.email }}" method="POST">
+            <input type="text" name="message" placeholder="Type your message..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

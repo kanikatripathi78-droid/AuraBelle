@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Artisan Profile - AuraBelle</title>
+<style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f6f7fb; margin: 0; }
+    .wrap { max-width: 1100px; margin: 30px auto; padding: 0 16px; }
+    .card { background: #fff; border-radius: 14px; box-shadow: 0 4px 18px rgba(0,0,0,0.08); padding: 24px; margin-bottom: 16px; }
+    .top { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .identity { display: flex; align-items: center; gap: 14px; }
+    .avatar { width: 64px; height: 64px; border-radius: 50%; background: #d4a574; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+    .name { font-size: 26px; margin: 0; }
+    .handle { color: #666; margin-top: 4px; }
+    .actions { display: flex; gap: 10px; }
+    .btn { padding: 10px 16px; border: none; border-radius: 8px; text-decoration: none; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: #d4a574; color: #fff; }
+    .btn-secondary { background: #1f2937; color: #fff; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+    .stat { background: #fafafa; border: 1px solid #eee; border-radius: 10px; padding: 14px; text-align: center; }
+    .stat .count { font-size: 24px; font-weight: 700; color: #d4a574; }
+    .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+    .product-card { border: 1px solid #eee; border-radius: 10px; background: #fff; overflow: hidden; }
+    .product-card img { width: 100%; height: 160px; object-fit: cover; }
+    .product-card .body { padding: 12px; }
+    .product-card h4 { margin: 0 0 8px; font-size: 16px; }
+    @media (max-width: 700px) { .stats { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="card">
+        <div class="top">
+            <div class="identity">
+                <div class="avatar">👤</div>
+                <div>
+                    <h1 class="name">{{ artisan.name or artisan.username or artisan.email }}</h1>
+                    <div class="handle">@{{ artisan.username or artisan.email }}</div>
+                </div>
+            </div>
+            {% if session.get('user') and session.get('user') != artisan.email %}
+            <div class="actions">
+                <form action="/follow/{{ artisan.email }}" method="POST">
+                    <button class="btn btn-primary" type="submit">{% if is_following %}Unfollow{% else %}Follow{% endif %}</button>
+                </form>
+                <a href="/dm/{{ artisan.email }}" class="btn btn-secondary">DM</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="stats">
+            <div class="stat"><div class="count">{{ followers_count }}</div><div>Followers</div></div>
+            <div class="stat"><div class="count">{{ following_count }}</div><div>Following</div></div>
+            <div class="stat"><div class="count">{{ products_count }}</div><div>Products Posted</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 style="margin-top:0;">Products by this Artisan</h2>
+        <div class="products">
+            {% for p in products %}
+            <div class="product-card">
+                <img src="{{ url_for('static', filename=p.image) }}" alt="{{ p.name }}">
+                <div class="body">
+                    <h4>{{ p.name }}</h4>
+                    <div style="margin-bottom:8px;">₹{{ p.price }}</div>
+                    <a class="btn btn-primary" href="/product/{{ p.id }}">View Product</a>
+                </div>
+            </div>
+            {% else %}
+            <p>No products posted yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+</body>
+</html>
